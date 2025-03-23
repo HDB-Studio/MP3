@@ -1,29 +1,29 @@
-#include "SDCardManager.h"
-#include <SPI.h>
-#include <SD.h>
+#include "ScreenManager.h"
+#include <Adafruit_GFX.h>  // 确保包含这一行
+#include <Adafruit_TFTLCD.h>
 #include <Arduino.h>
 
-#define SD_CS 4
+#define BLACK   0x0000
+#define WHITE   0xFFFF
 
-void SDCardManager::init() {
-    if (!SD.begin(SD_CS)) {
-        Serial.println("SD卡初始化失败！");
-        while (1);
-    }
-    Serial.println("SD卡初始化成功！");
+#define LCD_CS 10
+#define LCD_CD 9
+#define LCD_WR 8
+#define LCD_RD 7
+#define LCD_RESET 6
+
+Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
+
+void ScreenManager::init() {
+    tft.begin(0x9341);
+    tft.setRotation(1);
+    tft.fillScreen(BLACK);  // 使用 BLACK
 }
 
-bool SDCardManager::readFile(const char* filename) {
-    File file = SD.open(filename);
-    if (!file) {
-        Serial.print("无法打开文件：");
-        Serial.println(filename);
-        return false;
-    }
-    // 读取文件内容
-    while (file.available()) {
-        Serial.write(file.read());
-    }
-    file.close();
-    return true;
+void ScreenManager::updateDisplay() {
+    // 更新屏幕显示
+    tft.setCursor(0, 0);
+    tft.setTextColor(WHITE);  // 使用 WHITE
+    tft.setTextSize(1);
+    tft.println("Hello, World!");
 }
